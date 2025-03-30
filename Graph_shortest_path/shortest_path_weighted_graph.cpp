@@ -1,5 +1,6 @@
 #include<bits/stdc++.h>
 using namespace std;
+#define pp pair<int, int>
 
 vector<list<pair<int,int>>> graph;
 int v; // no of vertices
@@ -36,6 +37,8 @@ void shortest_path_without_pq(int src);
 void shortest_path_with_pq(int src);
 void print_shortest_path(int d);
 
+unordered_map<int,int> djikstra(int src, int n); // By Sanket Sir
+
 int main(){
     
     cin>>v;
@@ -64,6 +67,8 @@ int main(){
     cout<<"Enter destination to get the shortest path between: ";
     cin>>d;
     print_shortest_path(d);
+
+    // if we have given binary weights means 0 or 1 as a weight of the edges then we will apply 0-1BFS. we sue deque rather than queue in this case in which we will push 0 in the end and 1 in the front.
 
         
     return 0;
@@ -128,4 +133,31 @@ void print_shortest_path(int d){
     reverse(path.begin(),path.end());
     for(auto ele : path) cout<<ele<<" ";
     cout<<endl;
+}
+
+unordered_map<int,int> djikstra(int src, int n){ // O(VlogV + ElogV)  by Sanket sir
+    priority_queue<pp, vector<pp> , greater<pp> > pq; // {wt, node}
+    unordered_set<int> vis;
+    vector<int> via(n+1);
+    unordered_map<int, int> mp;
+    for(int i = 0; i < n; i++) mp[i] = INT_MAX;
+    pq.push({0, src});
+    mp[src] = 0;
+    while(!pq.empty()){ // O((V+E)logV)
+        pp curr = pq.top();
+        if(vis.count(curr.second)){
+            pq.pop();
+            continue;
+        }
+        vis.insert(curr.second);
+        pq.pop();
+        for(auto neighbour : graph[curr.second]) {
+            if(!vis.count(neighbour.first) and mp[neighbour.first] > mp[curr.second] + neighbour.second) {
+                pq.push({mp[curr.second] + neighbour.second, neighbour.first});
+                via[neighbour.first] = curr.second;
+                mp[neighbour.first] = mp[curr.second] + neighbour.second;
+            }
+        }
+    }
+    return mp;
 }

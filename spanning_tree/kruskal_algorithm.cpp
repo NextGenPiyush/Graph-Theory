@@ -23,6 +23,9 @@ int main(){
     vector<edge> v(e);
     for(int i=0; i<e; i++) cin>>v[i].src>>v[i].dest>>v[i].weight;
     cout<<kruskal(v,n,e)<<endl; 
+
+    // when we have no of edges < no of vertices then we will preffer kruskal algorithm (Sparse graph) s we process edges through DSU so less edges means less time complexity and also there is sorting 
+    // while when no of vertices > no of edges we will use prism algorithm (Dense graph)
     
     return 0;
 }
