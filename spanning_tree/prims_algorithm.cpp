@@ -14,6 +14,7 @@ void add_edge(int src, int dest, int weight, bool bi_dir = true){
 }
 
 int Minimum_spanning_tree();
+int prism(int src, int n);
 
 int main(){
     
@@ -27,7 +28,7 @@ int main(){
         // add_edge(src,dest,weight,false); 
     }
     
-    // to calculate minimum spanning tree graph must be connected otherwise we can't find MST
+    // to calculate minimum spanning tree graph must be connected otherwise we can't find MST as there will be no edge between two different components 
 
     return 0;
 }
@@ -35,7 +36,7 @@ int main(){
 int Minimum_spanning_tree(){
     priority_queue<pair<int,pair<int,int>>,vector<pair<int,pair<int,int>>>,greater<pair<int,pair<int,int>>>> pq;
     isMST.resize(v,false);
-    parent.resize(v,-1);
+    parent.resize(v,-1);  // we are maintaining parent so that we can get the tree in the end 
     int cost = 0;
     pq.push({0,{0,-1}});  // {weight,{node,parent}}
     while(!pq.empty()){
@@ -51,5 +52,36 @@ int Minimum_spanning_tree(){
         }
     }
     return cost;
+}
+
+int prism(int src, int n){   // implementation by sanket sir 
+    priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
+    unordered_set<int> vis;
+    vector<int> par(n);
+    unordered_map<int,int> mp;
+    for(int i=1; i<=n; i++) mp[i] = INT_MAX;   // make sure to check whether it is 0 based or 1 based indexing
+    mp[src] = 0;
+    pq.push({0,src});
+    int total_count = 0;
+    int result = 0;
+    while(total_count < n && !pq.empty()){
+        auto curr = pq.top();
+        if(vis.count(curr.second)){
+            pq.pop();
+            continue;
+        }
+        vis.insert(curr.second);
+        total_count++;
+        result += curr.first;
+        pq.pop();
+        for(auto neighbour : graph[curr.second]){
+            if(!vis.count(neighbour.first) and mp[neighbour.first]>neighbour.second){
+                pq.push({neighbour.first,neighbour.second});
+                par[neighbour.first] = curr.second;
+                mp[neighbour.first] = neighbour.second;
+            }
+        }
+    }   
+    return result;
 }
 
